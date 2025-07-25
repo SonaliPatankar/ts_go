@@ -1,25 +1,24 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-
+import MyButton from './componenets/button';
+import { CounterProvider } from './context/counter';
+import Home from './pages/Home';
+import ApiCall from './componenets/apiCall';
+import { Provider } from 'react-redux';
+import { store } from './redux/store';
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    // <CounterProvider>
+      <div className="App">
+        {/* <MyButton text="Click Me" />
+        <MyButton onclick={() => alert("Another Button Clicked")} text="Another Button" /> */}
+        {/* <MyButton text="Increment Count" /> */}
+<Provider store={store}>
+        <Home />
+        </Provider>
+      </div>
+    
   );
 }
 
