@@ -1,0 +1,10 @@
+version = 0.1
+
+[default.deploy.parameters]
+stack_name = "go-ts-notes"
+resolve_s3 = true
+s3_prefix = "go-ts-notes"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+image_repositories = ["NotesFunction=051826696128.dkr.ecr.us-east-1.amazonaws.com/gotsnotes838213b8/notesfunction969a0627repo"]

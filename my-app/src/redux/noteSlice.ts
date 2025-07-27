@@ -26,25 +26,25 @@ const initialState: NotesState = {
 
 // Async thunks
 export const fetchNotes = createAsyncThunk('notes/fetchNotes', async () => {
-  const res = await axios.get<Note[]>('http://localhost:8080/notes');
+  const res = await axios.get<Note[]>('https://apl4vp40xc.execute-api.us-east-1.amazonaws.com/Prod/notes');
   return res.data;
 });
 
 export const createNote = createAsyncThunk('notes/createNote', async (content: string) => {
-  const res = await axios.post<Note>('http://localhost:8080/notes', { content });
+  const res = await axios.post<Note>('https://apl4vp40xc.execute-api.us-east-1.amazonaws.com/Prod/notes', { content });
   return res.data;
 });
 
 export const updateNote = createAsyncThunk(
   'notes/updateNote',
   async ({ id, content }: { id: number; content: string }) => {
-    const res = await axios.put<Note>(`http://localhost:8080/notes/${id}`, { content });
+    const res = await axios.put<Note>(`https://apl4vp40xc.execute-api.us-east-1.amazonaws.com/Prod/notes/${id}`, { content });
     return res.data;
   }
 );
 
 export const deleteNote = createAsyncThunk('notes/deleteNote', async (id: number) => {
-  await axios.delete(`http://localhost:8080/notes/${id}`);
+  await axios.delete(`https://apl4vp40xc.execute-api.us-east-1.amazonaws.com/Prod/notes/${id}`);
   return id;
 });
 

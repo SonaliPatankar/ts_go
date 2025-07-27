@@ -1,7 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Go Notes Lambda with Docker and CORS
-
 Resources:
   NotesApiGateway:
     Type: AWS::Serverless::Api
@@ -9,19 +8,19 @@ Resources:
       Name: NotesApiGateway
       StageName: Prod
       Cors:
-        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
-        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-        AllowOrigin: "'*'"  # Replace with your frontend URL for stricter security
-
+        AllowMethods: '''GET,POST,PUT,DELETE,OPTIONS'''
+        AllowHeaders: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'''
+        AllowOrigin: '''*'''
   NotesFunction:
     Type: AWS::Serverless::Function
     Metadata:
+      DockerContext: D:\ts_go\ts_go\server
       Dockerfile: Dockerfile
-      DockerContext: .
+      SamResourceId: NotesFunction
     Properties:
       PackageType: Image
       Architectures:
-        - x86_64
+      - x86_64
       Timeout: 10
       MemorySize: 128
       Events:
@@ -30,10 +29,13 @@ Resources:
           Properties:
             Path: /notes
             Method: ANY
-            RestApiId: !Ref NotesApiGateway
+            RestApiId:
+              Ref: NotesApiGateway
         NotesById:
           Type: Api
           Properties:
             Path: /notes/{id}
             Method: ANY
-            RestApiId: !Ref NotesApiGateway
+            RestApiId:
+              Ref: NotesApiGateway
+      ImageUri: notesfunction:latest

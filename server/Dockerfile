@@ -1,21 +1,23 @@
-# Stage 1: Build the Go binary
-FROM golang:1.21 AS build
+# ---------- Stage 1: Build ----------
+FROM golang:1.21 AS builder
 
 WORKDIR /app
 
-# Copy go.mod and go.sum and download deps
+# Copy go.mod and go.sum first (for caching)
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Copy the source code and build it
+# Copy everything else
 COPY . .
-RUN go build -o main
 
-# Stage 2: Create the Lambda image
+# ⚠️ Build statically (no glibc dependency)
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main
+
+# ---------- Stage 2: Lambda Runtime ----------
 FROM public.ecr.aws/lambda/go:1
 
-# Copy compiled binary from build stage
-COPY --from=build /app/main .
+# Copy the binary from builder
+COPY --from=builder /app/main .
 
-# Set the CMD to run the binary
+# Lambda entrypoint
 CMD ["main"]

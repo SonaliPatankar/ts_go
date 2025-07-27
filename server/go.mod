@@ -1,4 +1,4 @@
-module gonotes
+module ts_go/server
 
 go 1.21
 

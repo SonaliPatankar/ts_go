@@ -2,7 +2,7 @@ package main
 
 import (
     "github.com/aws/aws-lambda-go/lambda"
-    "go-notes-lambda/handlers"
+    "ts_go/server/handlers"
 )
 
 func main() {
