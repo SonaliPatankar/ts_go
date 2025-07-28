@@ -25,6 +25,12 @@ Resources:
       Timeout: 10
       MemorySize: 128
       Events:
+        LoginApi:
+          Type: Api
+          Properties:
+            Path: /login
+            Method: POST
+            RestApiId: !Ref NotesApiGateway
         NotesApi:
           Type: Api
           Properties:

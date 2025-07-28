@@ -14,7 +14,7 @@ Resources:
   NotesFunction:
     Type: AWS::Serverless::Function
     Metadata:
-      DockerContext: D:\ts_go\ts_go\server
+      DockerContext: D:\sonali_workspace\ts_go\server
       Dockerfile: Dockerfile
       SamResourceId: NotesFunction
     Properties:
@@ -24,6 +24,13 @@ Resources:
       Timeout: 10
       MemorySize: 128
       Events:
+        LoginApi:
+          Type: Api
+          Properties:
+            Path: /login
+            Method: POST
+            RestApiId:
+              Ref: NotesApiGateway
         NotesApi:
           Type: Api
           Properties:

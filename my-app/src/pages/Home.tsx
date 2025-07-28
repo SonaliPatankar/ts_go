@@ -129,14 +129,14 @@ const Home: React.FC =()=>{
         <p>Loading...</p>
       ) : (
         <ul>
-          {notes?.map((note) => (
+          { Array.isArray(notes) ?notes.map((note) => (
             <NoteItem
               key={note.id}
               note={note}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
-          ))}
+          )): <p>No notes found.</p>}
         </ul>
       )}
     </div>

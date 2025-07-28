@@ -5,15 +5,59 @@ import (
     "encoding/json"
     "net/http"
     "ts_go/server/models"
+
     "github.com/aws/aws-lambda-go/events"
     "strconv"
 )
 
 var notes = []models.Note{}
 
-// Main Lambda handler
-func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-    // ✅ Handle CORS preflight request
+func NotesHttpHandler(w http.ResponseWriter, r *http.Request) {
+    // ctx := context.Background()
+    req := events.APIGatewayProxyRequest{
+        HTTPMethod: r.Method,
+    }
+    if r.Method == "OPTIONS" {
+        w.Header().Set("Access-Control-Allow-Origin", "*")
+        w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        w.WriteHeader(http.StatusOK)
+        return
+    }
+    // Always set CORS headers for all responses
+    w.Header().Set("Access-Control-Allow-Origin", "*")
+    w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+    w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+    if r.Method != "GET" && r.Method != "POST" {
+        authHeader := r.Header.Get("Authorization")
+        if authHeader == "" || VerifyJWT(authHeader) != nil {
+            w.WriteHeader(http.StatusUnauthorized)
+            w.Write([]byte(`{"error": "unauthorized"}`))
+            return
+        }
+    }
+    if r.Method == "GET" {
+        req.Path = "/notes"
+    }
+    if r.Method == "POST" {
+        req.Path = "/notes"
+        var newNote models.Note
+        if err := json.NewDecoder(r.Body).Decode(&newNote); err != nil {
+            w.WriteHeader(http.StatusBadRequest)
+            w.Write([]byte(`{"error": "Invalid request body"}`))
+            return
+        }
+        notes = append(notes, newNote)
+        w.WriteHeader(http.StatusCreated)
+        w.Write([]byte(`{"message": "Note created"}`))
+        return
+    }
+
+}
+
+
+func NotesHandler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
     if req.HTTPMethod == "OPTIONS" {
         return events.APIGatewayProxyResponse{
             StatusCode: http.StatusOK,
@@ -22,25 +66,38 @@ func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.API
         }, nil
     }
 
+    // ⛔ Require JWT for all methods except /login
+    if req.Path != "/login" {
+        if err := VerifyJWT(req.Headers["Authorization"]); err != nil {
+            return events.APIGatewayProxyResponse{
+                StatusCode: http.StatusUnauthorized,
+                Headers:    getCORSHeaders(),
+                Body:       `{"error": "unauthorized"}`,
+            }, nil
+        }
+    }
+
     switch req.HTTPMethod {
     case "GET":
         return handleGet()
-    case "POST":
-        return handlePost(req.Body)
     case "PUT":
         return handleUpdate(req.Body)
     case "DELETE":
-        // Try to get ID from path parameters (e.g., /notes/{id})
-        idStr := req.PathParameters["id"]
-        return handleDelete(idStr, req.Body)
+        return handleDelete(req.PathParameters["id"], req.Body)
+    case "POST":
+        if req.Path == "/login" {
+            return LoginHandler(req)
+        }
+        return handlePost(req.Body)
     default:
         return events.APIGatewayProxyResponse{
             StatusCode: http.StatusMethodNotAllowed,
             Headers:    getCORSHeaders(),
-            Body:       `{"error": "Method not allowed"}`,
+            Body:       `{"error": "method not allowed"}`,
         }, nil
     }
 }
+
 // PUT /notes
 func handleUpdate(body string) (events.APIGatewayProxyResponse, error) {
     var updatedNote models.Note

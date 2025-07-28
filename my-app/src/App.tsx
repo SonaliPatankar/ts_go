@@ -7,6 +7,8 @@ import Home from './pages/Home';
 import ApiCall from './componenets/apiCall';
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
+import Login from './pages/Login';
+import { Route, Routes } from 'react-router';
 function App() {
   return (
     // <CounterProvider>
@@ -14,9 +16,10 @@ function App() {
         {/* <MyButton text="Click Me" />
         <MyButton onclick={() => alert("Another Button Clicked")} text="Another Button" /> */}
         {/* <MyButton text="Increment Count" /> */}
-<Provider store={store}>
-        <Home />
-        </Provider>
+<Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/" element={<Home />} />
+    </Routes>
       </div>
     
   );

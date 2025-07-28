@@ -13,6 +13,7 @@ COPY . .
 # ⚠️ Build statically (no glibc dependency)
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main
 
+
 # ---------- Stage 2: Lambda Runtime ----------
 FROM public.ecr.aws/lambda/go:1
 

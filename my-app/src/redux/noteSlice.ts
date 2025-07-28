@@ -24,27 +24,46 @@ const initialState: NotesState = {
   error: null,
 };
 
+const BASE_URL = "https://apl4vp40xc.execute-api.us-east-1.amazonaws.com/Prod";
+
 // Async thunks
 export const fetchNotes = createAsyncThunk('notes/fetchNotes', async () => {
-  const res = await axios.get<Note[]>('https://apl4vp40xc.execute-api.us-east-1.amazonaws.com/Prod/notes');
+  const res = await axios.get<Note[]>(`${BASE_URL}/notes`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  });
+
   return res.data;
 });
 
 export const createNote = createAsyncThunk('notes/createNote', async (content: string) => {
-  const res = await axios.post<Note>('https://apl4vp40xc.execute-api.us-east-1.amazonaws.com/Prod/notes', { content });
+  const res = await axios.post<Note>(`${BASE_URL}/notes`, { content }, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  });
   return res.data;
 });
 
 export const updateNote = createAsyncThunk(
   'notes/updateNote',
   async ({ id, content }: { id: number; content: string }) => {
-    const res = await axios.put<Note>(`https://apl4vp40xc.execute-api.us-east-1.amazonaws.com/Prod/notes/${id}`, { content });
+    const res = await axios.put<Note>(`${BASE_URL}/notes/${id}`, { content }, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
     return res.data;
   }
 );
 
 export const deleteNote = createAsyncThunk('notes/deleteNote', async (id: number) => {
-  await axios.delete(`https://apl4vp40xc.execute-api.us-east-1.amazonaws.com/Prod/notes/${id}`);
+  await axios.delete(`${BASE_URL}/notes/${id}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  });
   return id;
 });
 
