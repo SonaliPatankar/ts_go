@@ -91,9 +91,6 @@ const Home: React.FC =()=>{
     dispatch(fetchNotes());
   }, [dispatch]);
 
-  useEffect(() => {
-    dispatch(fetchNotes());
-  }, [dispatch]);
 
   const handleSubmit = () => {
     if (editId !== null) {
@@ -130,6 +127,7 @@ const Home: React.FC =()=>{
       ) : (
         <ul>
           { Array.isArray(notes) ?notes.map((note) => (
+            console.log('Rendering note:', note),
             <NoteItem
               key={note.id}
               note={note}

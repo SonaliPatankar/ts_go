@@ -12,7 +12,7 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const res = await axios.post('https://apl4vp40xc.execute-api.us-east-1.amazonaws.com/Prod/login', {
+      const res = await axios.post('https://yd3u0icwak.execute-api.us-east-1.amazonaws.com/Prod/login', {
         username,
         password,
       });

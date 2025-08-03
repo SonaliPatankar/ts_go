@@ -43,3 +43,14 @@ Resources:
             Path: /notes/{id}
             Method: ANY
             RestApiId: !Ref NotesApiGateway
+    Policies:
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Effect: Allow
+            Action:
+              - dynamodb:PutItem
+              - dynamodb:GetItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+              - dynamodb:Scan
+            Resource: arn:aws:dynamodb:us-east-1:051826696128:table/Notes

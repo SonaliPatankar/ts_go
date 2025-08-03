@@ -24,7 +24,7 @@ const initialState: NotesState = {
   error: null,
 };
 
-const BASE_URL = "https://apl4vp40xc.execute-api.us-east-1.amazonaws.com/Prod";
+const BASE_URL = "https://yd3u0icwak.execute-api.us-east-1.amazonaws.com/Prod"; // Update to your actual API URL
 
 // Async thunks
 export const fetchNotes = createAsyncThunk('notes/fetchNotes', async () => {
@@ -49,7 +49,7 @@ export const createNote = createAsyncThunk('notes/createNote', async (content: s
 export const updateNote = createAsyncThunk(
   'notes/updateNote',
   async ({ id, content }: { id: number; content: string }) => {
-    const res = await axios.put<Note>(`${BASE_URL}/notes/${id}`, { content }, {
+    const res = await axios.put<Note>(`${BASE_URL}/notes/${id}`, {id, content }, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
